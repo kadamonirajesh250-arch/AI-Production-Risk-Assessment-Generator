@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Production Risk Assessment Generator - DigiQuest Studio</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Chart.js for Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Background Glows -->
+  <div class="glow-bg">
+    <div class="glow-sphere glow-1"></div>
+    <div class="glow-sphere glow-2"></div>
+  </div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <i class="fa-solid fa-wand-magic-sparkles logo-icon"></i>
+        <div class="logo-text">
+          <h1>DigiQuest</h1>
+          <span>Risk Assessment</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-tab="generator">
+          <i class="fa-solid fa-gears"></i> Generator
+        </button>
+        <button class="nav-btn" data-tab="history">
+          <i class="fa-solid fa-clock-rotate-left"></i> History
+        </button>
+        <button class="nav-btn" data-tab="admin">
+          <i class="fa-solid fa-user-shield"></i> Admin Analyse
+        </button>
+      </nav>
+
+
+      
+      <div class="sidebar-footer">
+        <p>&copy; 2026 DigiQuest Studio</p>
+        <span>v1.0.0</span>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Top Header -->
+      <header class="main-header">
+        <div class="header-title">
+          <h2 id="page-title">AI Risk Generator</h2>
+          <p id="page-subtitle">Input production specs to assess potential risks and compile mitigations.</p>
+        </div>
+        <div class="header-actions">
+          <button class="theme-toggle" style="display: none;"><i class="fa-solid fa-moon"></i></button>
+          <div class="user-badge">
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Project Manager</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Tab Content: Generator -->
+      <section class="tab-content active" id="tab-generator">
+        <!-- Preset Templates Strip -->
+        <div class="presets-section card">
+          <div class="presets-header">
+            <h3><i class="fa-solid fa-bolt"></i> Quick Load Scenarios</h3>
+            <span>Click a preset to auto-fill the risk parameters</span>
+          </div>
+          <div class="presets-container" id="presets-list">
+            <!-- Loaded dynamically -->
+            <div class="preset-card loading-skeleton"></div>
+            <div class="preset-card loading-skeleton"></div>
+            <div class="preset-card loading-skeleton"></div>
+          </div>
+        </div>
+
+        <div class="generator-grid">
+          <!-- Input Form Panel -->
+          <div class="input-panel card">
+            <div class="panel-header">
+              <h3><i class="fa-solid fa-pen-to-square"></i> Project Details</h3>
+              <button class="clear-btn" id="btn-clear-form"><i class="fa-solid fa-eraser"></i> Clear</button>
+            </div>
+            
+            <form id="risk-form" class="assessment-form">
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label for="project-name">Project Name <span class="required">*</span></label>
+                  <input type="text" id="project-name" required placeholder="e.g. Lost in Shadow" class="form-input">
+                  <span class="error-msg" id="err-project-name"></span>
+                </div>
+                <div class="form-group">
+                  <label for="project-manager">Project Manager <span class="required">*</span></label>
+                  <input type="text" id="project-manager" required placeholder="e.g. Evelyn Reed" class="form-input">
+                  <span class="error-msg" id="err-project-manager"></span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <div class="label-wrapper">
+                  <label for="production-scope">Production Scope <span class="required">*</span></label>
+                  <span class="char-count" id="scope-char-count">0 / 1000</span>
+                </div>
+                <textarea id="production-scope" required maxlength="1000" rows="4" placeholder="Describe scope, content formats (VFX, animation, dubbing, etc.), quality standards..." class="form-input"></textarea>
+                <span class="error-msg" id="err-production-scope"></span>
+              </div>
+
+              <div class="form-group">
+                <div class="label-wrapper">
+                  <label for="production-timeline">Timeline & Deadlines <span class="required">*</span></label>
+                  <span class="char-count" id="timeline-char-count">0 / 500</span>
+                </div>
+                <textarea id="production-timeline" required maxlength="500" rows="3" placeholder="Duration, project dates, review milestones, and critical release dates..." class="form-input"></textarea>
+                <span class="error-msg" id="err-production-timeline"></span>
+              </div>
+
+              <div class="form-group">
+                <div class="label-wrapper">
+                  <label for="resource-plan">Resource & Team Plan <span class="required">*</span></label>
+                  <span class="char-count" id="resource-char-count">0 / 500</span>
+                </div>
+                <textarea id="resource-plan" required maxlength="500" rows="3" placeholder="Allocated staff size, key creative roles, compute resources (render farms)..." class="form-input"></textarea>
+                <span class="error-msg" id="err-resource-plan"></span>
+              </div>
+
+              <button type="submit" class="submit-btn" id="btn-generate">
+                <span class="btn-text"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate Assessment</span>
+                <div class="btn-loader">
+                  <span class="spinner"></span>
+                  <span>AI Analyzing Pipeline...</span>
+                </div>
+              </button>
+            </form>
+          </div>
+
+          <!-- Output Display Panel -->
+          <div class="output-panel card" id="output-container">
+            <!-- State 1: Idle -->
+            <div class="output-state-idle" id="output-idle">
+              <div class="idle-graphic">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+              <h3>Ready for Assessment</h3>
+              <p>Fill out the project details form and trigger the AI agent. The generator will review dependencies, pipeline bottlenecks, and deliver categorized mitigations.</p>
+            </div>
+
+            <!-- State 2: Generating -->
+            <div class="output-state-generating" id="output-generating" style="display: none;">
+              <div class="pulse-loader">
+                <div class="pulse-circle"></div>
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <h3 id="loader-title">DigiQuest Risk Engine Active</h3>
+              <p id="loader-desc">Cross-checking timeline with resource limitations...</p>
+              
+              <div class="progress-bar-wrapper">
+                <div class="progress-bar-fill" id="progress-bar"></div>
+              </div>
+            </div>
+
+            <!-- State 3: Success -->
+            <div class="output-state-success" id="output-success" style="display: none;">
+              <div class="success-header">
+                <div class="success-title">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <h3>Risk Assessment Report</h3>
+                </div>
+                <div class="success-actions">
+                  <button class="action-btn" id="btn-copy" title="Copy Raw Text"><i class="fa-regular fa-copy"></i> Copy</button>
+                  <button class="action-btn" id="btn-download-txt" title="Download Text File"><i class="fa-solid fa-file-arrow-down"></i> TXT</button>
+                  <button class="action-btn" id="btn-download-pdf" title="Print/Save as PDF"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                  <button class="action-btn highlight-btn" id="btn-regenerate" title="Regenerate Assessment"><i class="fa-solid fa-arrows-rotate"></i> Regenerate</button>
+                </div>
+              </div>
+
+              <!-- Report Render Area -->
+              <div class="report-render markdown-body" id="report-view">
+                <!-- Injected via app.js -->
+              </div>
+
+              <!-- Rating and Feedback Section -->
+              <div class="feedback-box card">
+                <h4>Rate the Quality of This Output</h4>
+                <p>Help us audit Prompt Accuracy and decrease production deviations.</p>
+                <div class="feedback-interactive">
+                  <div class="rating-stars" id="rating-stars-container">
+                    <span class="star-icon" data-value="1"><i class="fa-regular fa-star"></i></span>
+                    <span class="star-icon" data-value="2"><i class="fa-regular fa-star"></i></span>
+                    <span class="star-icon" data-value="3"><i class="fa-regular fa-star"></i></span>
+                    <span class="star-icon" data-value="4"><i class="fa-regular fa-star"></i></span>
+                    <span class="star-icon" data-value="5"><i class="fa-regular fa-star"></i></span>
+                  </div>
+                  <div class="thumbs-voting">
+                    <button class="thumb-btn" id="btn-thumb-up" title="High Quality"><i class="fa-regular fa-thumbs-up"></i></button>
+                    <button class="thumb-btn" id="btn-thumb-down" title="Poor Quality"><i class="fa-regular fa-thumbs-down"></i></button>
+                  </div>
+                </div>
+                <div class="feedback-comment-wrapper" id="feedback-comment-area" style="display: none;">
+                  <textarea id="feedback-comment" rows="2" placeholder="Tell us what could be improved or what was highly accurate..."></textarea>
+                  <button class="submit-feedback-btn" id="btn-submit-feedback">Submit Feedback</button>
+                </div>
+                <div class="feedback-success-msg" id="feedback-success" style="display: none;">
+                  <i class="fa-solid fa-circle-check"></i> Thank you! Your response is stored in quality audits.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab Content: History -->
+      <section class="tab-content" id="tab-history">
+        <div class="history-layout card">
+          <div class="history-sidebar">
+            <div class="history-search">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="history-search-input" placeholder="Search project name...">
+            </div>
+            <div class="history-list-group" id="history-sidebar-list">
+              <!-- Loaded dynamically -->
+              <div class="history-item loading-skeleton"></div>
+              <div class="history-item loading-skeleton"></div>
+              <div class="history-item loading-skeleton"></div>
+            </div>
+          </div>
+          <div class="history-viewer" id="history-detail-view">
+            <div class="history-viewer-idle">
+              <i class="fa-solid fa-folder-open"></i>
+              <h3>No Record Selected</h3>
+              <p>Choose an item from the history panel on the left to examine, export, or audit the rating.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab Content: Admin Dashboard -->
+      <section class="tab-content" id="tab-admin">
+        <div class="admin-grid">
+          <!-- Metric Counters -->
+          <div class="analytics-metrics">
+            <div class="metric-card card">
+              <div class="metric-icon"><i class="fa-solid fa-chart-line"></i></div>
+              <div class="metric-info">
+                <span>Total Generations</span>
+                <h2 id="stat-total-gens">0</h2>
+              </div>
+            </div>
+            <div class="metric-card card">
+              <div class="metric-icon rating-icon"><i class="fa-solid fa-star"></i></div>
+              <div class="metric-info">
+                <span>Average Output Quality</span>
+                <h2 id="stat-avg-rating">0.0 / 5.0</h2>
+              </div>
+            </div>
+            <div class="metric-card card">
+              <div class="metric-icon time-icon"><i class="fa-solid fa-stopwatch"></i></div>
+              <div class="metric-info">
+                <span>Avg Response Time</span>
+                <h2 id="stat-avg-time">0 ms</h2>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="analytics-charts card">
+            <h3><i class="fa-solid fa-chart-simple"></i> System Usage & Quality Trends</h3>
+            <div class="charts-row">
+              <div class="chart-wrapper">
+                <h4>Daily Assessments Generated</h4>
+                <canvas id="chart-generations"></canvas>
+              </div>
+              <div class="chart-wrapper">
+                <h4>Average Quality Score (Prompt Audit)</h4>
+                <canvas id="chart-quality"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- App scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

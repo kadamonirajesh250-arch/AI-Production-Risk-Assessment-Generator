@@ -1,0 +1,23 @@
+{
+  "name": "ai-production-risk-assessment-generator",
+  "version": "1.0.0",
+  "description": "AI Production Risk Assessment Generator for DigiQuest Studio",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "test": "node tests/integration_tests.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "firebase-admin": "^14.0.0",
+    "openai": "^4.73.1",
+    "pg": "^8.22.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
