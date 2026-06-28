@@ -279,7 +279,7 @@ function initializeLocalDb() {
       if (!localDb.prompts || localDb.prompts.length === 0) localDb.prompts = DEFAULT_PROMPTS;
       if (!localDb.presets || localDb.presets.length === 0) localDb.presets = DEFAULT_PRESETS;
     } else {
-      localDb.generations = getSampleGenerations();
+      localDb.generations = [];
       localDb.prompts = DEFAULT_PROMPTS;
       localDb.presets = DEFAULT_PRESETS;
       saveLocalToFile();
@@ -287,7 +287,7 @@ function initializeLocalDb() {
     console.log('JSON File database initialized successfully.');
   } catch (error) {
     console.error('Failed to initialize JSON database, using in-memory mode:', error.message);
-    localDb.generations = getSampleGenerations();
+    localDb.generations = [];
     localDb.prompts = DEFAULT_PROMPTS;
     localDb.presets = DEFAULT_PRESETS;
   }
@@ -371,17 +371,7 @@ async function initializePostgresDb() {
       }
     }
 
-    const genCount = await client.query('SELECT COUNT(*) FROM generations');
-    if (parseInt(genCount.rows[0].count, 10) === 0) {
-      const samples = getSampleGenerations();
-      for (const g of samples) {
-        await client.query(
-          `INSERT INTO generations (id, project_name, project_manager, production_scope, timeline, resource_plan, prompt_version, response_text, response_time_ms, timestamp, rating, feedback) 
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-          [g.id, g.projectName, g.projectManager, g.productionScope, g.timeline, g.resourcePlan, g.promptVersion, g.responseText, g.responseTimeMs, g.timestamp, g.rating, g.feedback]
-        );
-      }
-    }
+
 
     console.log('PostgreSQL database initialized and seeded successfully.');
   } catch (error) {
@@ -418,16 +408,7 @@ async function initializeFirebaseDb() {
       }
     }
 
-    // Seed sample generations
-    const genRef = firestore.collection('generations');
-    const genSnapshot = await genRef.limit(1).get();
-    if (genSnapshot.empty) {
-      console.log('Seeding sample generations into Cloud Firestore...');
-      const samples = getSampleGenerations();
-      for (const g of samples) {
-        await genRef.doc(g.id).set(g);
-      }
-    }
+
 
     console.log('Firebase Cloud Firestore database initialized and seeded successfully.');
   } catch (error) {
