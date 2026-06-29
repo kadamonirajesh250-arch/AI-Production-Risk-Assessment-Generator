@@ -976,6 +976,7 @@ function renderCharts(data) {
   
   // Format date helper (e.g. "2026-06-15" -> "Jun 15")
   const formatDateLabel = (dateStr) => {
+    if (!dateStr) return "";
     const parts = dateStr.split('-');
     if (parts.length === 3) {
       const monthIdx = parseInt(parts[1], 10) - 1;
@@ -985,11 +986,13 @@ function renderCharts(data) {
     return dateStr;
   };
 
-  const dates = data.dailyCounts.map(item => formatDateLabel(item.date));
-  const counts = data.dailyCounts.map(item => item.count);
+  const dates = data.dailyCounts ? data.dailyCounts.map(item => formatDateLabel(item.date)) : [];
+  const counts = data.dailyCounts ? data.dailyCounts.map(item => item.count) : [];
 
   // Filter out dates that have no ratings to prevent the line chart from plunging to 0 or null
-  const ratedDailyCounts = data.dailyCounts.filter(item => item.avgRating !== null);
+  const ratedDailyCounts = data.dailyCounts 
+    ? data.dailyCounts.filter(item => item.avgRating !== null && item.avgRating !== undefined && !isNaN(parseFloat(item.avgRating))) 
+    : [];
   const qualityDates = ratedDailyCounts.map(item => formatDateLabel(item.date));
   const quality = ratedDailyCounts.map(item => parseFloat(item.avgRating));
 
@@ -1012,8 +1015,8 @@ function renderCharts(data) {
         datasets: [{
           label: 'Assessments Created',
           data: counts,
-          backgroundColor: 'rgba(99, 102, 241, 0.4)',
-          borderColor: '#6366f1',
+          backgroundColor: 'rgba(16, 185, 129, 0.4)', // Themed Emerald Green
+          borderColor: '#10b981',
           borderWidth: 1.5,
           borderRadius: 4
         }]
@@ -1037,39 +1040,49 @@ function renderCharts(data) {
   if (charts.quality) charts.quality.destroy();
 
   const chartQualEl = document.getElementById('chart-quality');
-  if (chartQualEl) {
-    const ctxQual = chartQualEl.getContext('2d');
-    charts.quality = new Chart(ctxQual, {
-      type: 'line',
-      data: {
-        labels: qualityDates,
-        datasets: [{
-          label: 'Average Score',
-          data: quality,
-          backgroundColor: 'rgba(139, 92, 246, 0.1)',
-          borderColor: '#8b5cf6',
-          borderWidth: 2,
-          tension: 0.3,
-          pointBackgroundColor: '#8b5cf6',
-          pointRadius: 4,
-          spanGaps: true
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { grid: { display: false }, ticks: { font: fontStyle, color: '#9ca3af' } },
-          y: { 
-            min: 1,
-            max: 5,
-            grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
-            ticks: { font: fontStyle, color: '#9ca3af', stepSize: 1 } 
+  const qualPlaceholder = document.getElementById('quality-placeholder');
+
+  if (quality.length === 0) {
+    if (chartQualEl) chartQualEl.style.display = 'none';
+    if (qualPlaceholder) qualPlaceholder.style.display = 'flex';
+  } else {
+    if (chartQualEl) chartQualEl.style.display = 'block';
+    if (qualPlaceholder) qualPlaceholder.style.display = 'none';
+
+    if (chartQualEl) {
+      const ctxQual = chartQualEl.getContext('2d');
+      charts.quality = new Chart(ctxQual, {
+        type: 'line',
+        data: {
+          labels: qualityDates,
+          datasets: [{
+            label: 'Average Score',
+            data: quality,
+            backgroundColor: 'rgba(14, 165, 233, 0.1)', // Themed Sky Blue
+            borderColor: '#0ea5e9',
+            borderWidth: 2,
+            tension: 0.3,
+            pointBackgroundColor: '#0ea5e9',
+            pointRadius: 4,
+            spanGaps: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: fontStyle, color: '#9ca3af' } },
+            y: { 
+              min: 1,
+              max: 5,
+              grid: { color: 'rgba(255, 255, 255, 0.05)' }, 
+              ticks: { font: fontStyle, color: '#9ca3af', stepSize: 1 } 
+            }
           }
         }
-      }
-    });
+      });
+    }
   }
 }
 
